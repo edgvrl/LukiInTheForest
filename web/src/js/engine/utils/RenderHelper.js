@@ -7,7 +7,6 @@ let autoscale = true;
 
 export function initViewport(autoScale = true) {
     autoscale = autoScale;
-
     window.addEventListener("resize", () => {
         if (!camera || !renderer || !autoscale) return;
 
@@ -19,7 +18,7 @@ export function initViewport(autoScale = true) {
 
 export function createCamera(fov = 60, near = 0.1, far = 1000) {
     camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far);
-    camera.position.set(0, 5, 10);
+    camera.position.set(0, 10, 10);
     return camera;
 }
 
@@ -35,13 +34,3 @@ export function createRenderer(containerSelector = "#app") {
     return renderer;
 }
 
-export function startRenderLoop(updateCallback) {
-    if (!camera || !renderer) throw new Error("Camera or renderer not initialized.");
-
-    function loop() {
-        if (updateCallback) updateCallback();
-        renderer.render(scene, camera); // We'll pass scene via updateCallback or closure
-        requestAnimationFrame(loop);
-    }
-    loop();
-}
