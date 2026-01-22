@@ -1,6 +1,7 @@
 ﻿import GameObject from "../../base/GameObject.js";
 import { GUI } from "dat.gui";
-import DebugFrameTimeMonitor from "./DebugFrameTimeMonitor.js";
+import DebugFrameTimeMonitor from "./modules/DebugFrameTimeMonitor.js";
+import DebugLightVisualiser from "./modules/DebugLightVisualiser.js";
 
 export default class DebugMenu extends GameObject {
 
@@ -10,13 +11,14 @@ export default class DebugMenu extends GameObject {
         const { key = "F2" } = args;
 
         this.debugState = {
-            frameTimeMonitor: false
+            frameTimeMonitor: false,
+            lightVisualiser: false,
         };
 
         this.debugGui = new GUI();
 
-        this.debugGui
-            .add(this.debugState, "frameTimeMonitor")
+         var ro = this.debugGui.addFolder("Render Options");
+         ro.add(this.debugState, "frameTimeMonitor")
             .name("FPS/MS")
             .onChange((enabled) => {
                 enabled
@@ -24,7 +26,16 @@ export default class DebugMenu extends GameObject {
                     : this.destroyFrameTimeMonitor();
             });
 
-        this.debugGui.domElement.style.display = "none";
+        ro.add(this.debugState, "lightVisualiser")
+            .name("Light Visualiser")
+            .onChange((enabled) => {
+                enabled
+                    ? this.spawnLightVisualiser()
+                    : this.destroyLightVisualiser();
+            });
+
+
+        //this.debugGui.domElement.style.display = "none"; TODO: only for debug purposes
 
         document.addEventListener("keydown", (k) => {
             if (k.code === key) {
@@ -51,13 +62,27 @@ export default class DebugMenu extends GameObject {
         this.FTMonitor = null;
     }
 
+    spawnLightVisualiser() {
+        if (this.lightVisualiser) return;
+
+        this.lightVisualiser = new DebugLightVisualiser();
+        this.parentWorld.add(this.lightVisualiser);
+    }
+
+    destroyLightVisualiser() {
+        if (!this.lightVisualiser) return;
+
+        this.lightVisualiser.destroy();
+        this.lightVisualiser = null;
+    }
+
     update() {
         super.update();
-        this.FTMonitor?.update();
     }
 
     destroy() {
         this.destroyFrameTimeMonitor();
+        this.destroyLightVisualiser()
         this.debugGui.destroy();
         super.destroy();
     }

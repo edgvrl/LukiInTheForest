@@ -36,7 +36,7 @@ async function init() {
 
 
 
-    world.add(new PointLightObject({position: new THREE.Vector3(2,5,2),}));
+    world.add(new PointLightObject({position: new THREE.Vector3(2,2,2),}));
     world.add(new SpotLightObject({position: new THREE.Vector3(0,5,0),}));
 
     console.log(world.gameObjects);

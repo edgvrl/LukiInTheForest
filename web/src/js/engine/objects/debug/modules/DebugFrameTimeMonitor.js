@@ -1,4 +1,4 @@
-﻿import GameObject from "../../base/GameObject.js";
+﻿import GameObject from "../../../base/GameObject.js";
 import Stats from "three/addons/libs/stats.module.js";
 
 export default class DebugFrameTimeMonitor extends GameObject {
@@ -23,7 +23,7 @@ export default class DebugFrameTimeMonitor extends GameObject {
     }
 
     update() {
-        super.update();
         this.FTMonitor.update();
+        super.update();
     }
 }
