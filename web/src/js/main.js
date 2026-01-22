@@ -7,14 +7,14 @@ import World from "./engine/base/GameWorld.js";
 import PointLightObject from "./engine/objects/light/PointLightObject.js";
 import SpotLightObject from "./engine/objects/light/SpotlightObject.js";
 import StaticMeshObject from "./engine/objects/mesh/StaticMeshObject.js";
-import DebugFrameTimeMonitor from "./engine/objects/debug/DebugFrameTimeMonitor.js";
+import DebugMenu from "./engine/objects/debug/DebugMenu.js";
 
 const clock = new THREE.Clock();
 
 let scene, camera, renderer, debugHelper, controls;
 let world;
 
-const FM = new DebugFrameTimeMonitor({})
+const debug = new DebugMenu({key:"F2"})
 
 window.addEventListener("load", init);
 
@@ -29,14 +29,7 @@ async function init() {
 
     world = new World(scene);
 
-    debugHelper = new DebugHelper(world);
-
-    world.add(FM);
-
-    document.addEventListener("keydown", (event) => {
-        FM.destroy();
-    })
-
+    world.add(debug);
 
 
     createGround();
@@ -70,8 +63,6 @@ function animate() {
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
     controls.update(delta);
-
-    debugHelper.update(delta);
 }
 
 
