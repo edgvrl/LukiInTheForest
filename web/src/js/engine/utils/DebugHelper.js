@@ -1,4 +1,4 @@
-﻿import CannonDebugger from 'cannon-es-debugger';
+﻿import Stats from 'three/addons/libs/stats.module.js';
 import { GUI } from 'dat.gui';
 
 export default class DebugHelper {
@@ -7,13 +7,26 @@ export default class DebugHelper {
 
         this.debug = true;
 
-        this.cannonDebugger = new CannonDebugger(this.world.scene, this.world.physics);
+
+        this.renderStats = this.initRenderStats()
+
         this.debugGui = new GUI();
     }
 
+    initRenderStats(){
+        var s = new Stats();
+        s.domElement.style.position = 'absolute';
+        s.domElement.style.top = '0px';
+        s.domElement.style.display = 'block';
+        s.domElement.style.cursor = 'pointer';
+        s.domElement.style.height = '100%';
+        document.body.appendChild( s.domElement );
+        return s;
+    }
+
     update() {
-        if (this.debug && this.world.scene && this.world.physics && this.cannonDebugger) {
-            this.cannonDebugger.update();
+        if (this.debug && this.world.scene && this.renderStats) {
+            this.renderStats.update();
         }
     }
 
