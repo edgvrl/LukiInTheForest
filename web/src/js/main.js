@@ -1,25 +1,23 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 import * as RenderHelper from "./engine/utils/RenderHelper.js";
 import * as ControlsHandler from "./engine/ControlsHandler.js";
-import DebugHelper from "./engine/utils/DebugHelper.js";
 
-import World from "./engine/Base/GameWorld.js";
-import GameObject from "./engine/Base/GameObject.js";
-import {Vector3} from "three";
-import {OrbitControls} from "three/addons/controls/OrbitControls.js";
-import {deltaTime} from "three/tsl";
-import PointLightObject from "./engine/Objects/PointLightObject.js";
-import SpotLightObject from "./engine/Objects/SpotlightObject.js";
+import World from "./engine/base/GameWorld.js";
+import PointLightObject from "./engine/objects/light/PointLightObject.js";
+import SpotLightObject from "./engine/objects/light/SpotlightObject.js";
+import StaticMeshObject from "./engine/objects/mesh/StaticMeshObject.js";
+import DebugFrameTimeMonitor from "./engine/objects/debug/DebugFrameTimeMonitor.js";
 
 const clock = new THREE.Clock();
 
 let scene, camera, renderer, debugHelper, controls;
 let world;
 
+const FM = new DebugFrameTimeMonitor({})
+
 window.addEventListener("load", init);
+
 
 async function init() {
     scene = new THREE.Scene();
@@ -33,16 +31,22 @@ async function init() {
 
     debugHelper = new DebugHelper(world);
 
-    // Create objects
+    world.add(FM);
+
+    document.addEventListener("keydown", (event) => {
+        FM.destroy();
+    })
+
+
+
     createGround();
 
 
 
-    world.add(new PointLightObject({position: new THREE.Vector3(2,2,0),}));
-    world.add(new SpotLightObject({position: new THREE.Vector3(0,2,0),}));
+    world.add(new PointLightObject({position: new THREE.Vector3(2,5,2),}));
+    world.add(new SpotLightObject({position: new THREE.Vector3(0,5,0),}));
 
     console.log(world.gameObjects);
-
 
     animate();
 }
@@ -52,10 +56,10 @@ function createGround() {
         new THREE.PlaneGeometry(10, 10),
         new THREE.MeshStandardMaterial({ color: 0xffffff })
     );
-    mesh.rotation.x = -Math.PI / 2;
-    mesh.receiveShadow = true;
 
-    scene.add(mesh);
+    var temp = new StaticMeshObject({mesh: mesh, receiveShadows: true});
+    temp.setRotation(-90,0,0);
+    world.add(temp);
 }
 
 function animate() {

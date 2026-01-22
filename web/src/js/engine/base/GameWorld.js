@@ -13,24 +13,24 @@ export default class World {
         return this._nextId++;
     }
 
-    add(gameObject) {
-        if (!(gameObject instanceof GameObject)) return;
-        if (gameObject.parentWorld) {
+    add(object) {
+        if (!(object instanceof GameObject)) return;
+        if (object.parentWorld) {
             throw new Error("GameObject already belongs to a world");
         }
 
         const id = this.#getNewID();
 
-        gameObject.id = id;
-        gameObject.parentWorld = this;
+        object.id = id;
+        object.parentWorld = this;
 
-        this.gameObjects.set(id, gameObject);
+        this.gameObjects.set(id, object);
 
-        if (gameObject.objectScene) {
-            this.scene.add(gameObject.objectScene);
+        if (object.objectScene) {
+            this.scene.add(object.objectScene);
         }
 
-        gameObject.onAdded?.();
+        object.onAdded?.();
     }
 
     remove(object) {

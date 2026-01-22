@@ -1,5 +1,5 @@
 ﻿import * as THREE from "three";
-import GameObject from "../Base/GameObject.js";
+import GameObject from "../../base/GameObject.js";
 
 export default class PointLightObject extends GameObject {
 
