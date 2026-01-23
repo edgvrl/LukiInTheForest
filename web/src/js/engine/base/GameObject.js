@@ -6,6 +6,9 @@ export default class GameObject {
         this.parentWorld = null;
         this.id = null;
 
+        this.physics = false;
+        this.rigidbody = null;
+
         const {
             position = new THREE.Vector3(),
             rotation = new THREE.Vector3(),
@@ -26,7 +29,8 @@ export default class GameObject {
 
     onAdded(){}
 
-    update() {}
+    update() {
+    }
 
     destroy() {
         if (!this.parentWorld) return;
@@ -75,10 +79,17 @@ export default class GameObject {
             );
         }
 
-        if (this.objectScene) {
+        if (this.rigidbody) {
+            const quat = new THREE.Quaternion().setFromEuler(this.rotation);
+            this.rigidbody.setRotation(
+                { x: quat.x, y: quat.y, z: quat.z, w: quat.w },
+                true
+            );
+        } else if (this.objectScene) {
             this.objectScene.rotation.copy(this.rotation);
         }
     }
+
 
     // --- Rotation getters in degrees ---
     getRotation() {

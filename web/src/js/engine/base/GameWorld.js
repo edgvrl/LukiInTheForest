@@ -1,10 +1,17 @@
 import * as THREE from "three";
+import RAPIER from '@dimforge/rapier3d-compat';
 import GameObject from "./GameObject.js";
+
 
 export default class World {
 
+
     constructor(scene) {
+        this.gravity = new RAPIER.Vector3(0.0, -9.81, 0.0)
+
         this.scene = scene;
+        this.physicsScene = new RAPIER.World(this.gravity)
+
         this.gameObjects = new Map();
         this._nextId = 1;
     }
@@ -48,9 +55,12 @@ export default class World {
     }
 
 
-    update() {
+    update(delta) {
         for (const obj of this.gameObjects.values()) {
             obj.update();
         }
+
+        this.physicsScene.timestep = Math.min(delta, 0.01)
+        this.physicsScene.step()
     }
 }
