@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import RAPIER from '@dimforge/rapier3d-compat';
+import RAPIER, {Collider} from '@dimforge/rapier3d-compat';
 import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 const gltfLoader = new GLTFLoader();
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -19,14 +19,18 @@ import SkyBoxObject from "./engine/objects/light/SkyBoxObject.js";
 import DebugMenu from "./engine/objects/debug/DebugMenu.js";
 import DebugCollisionVisualiser from "./engine/objects/debug/modules/DebugCollisionVisualiser.js";
 import {Vector3} from "three";
+import AssetManager from "./engine/base/AssetManager.js";
 
 
 const clock = new THREE.Clock();
 
-let scene, camera, renderer, debugHelper, controls;
+let scene, camera, renderer, controls;
 let world;
 
 const debug = new DebugMenu({key:"F2"})
+
+const assetManager = new AssetManager();
+const assetPath = "/assets.json"
 
 window.addEventListener("load", init);
 
@@ -39,8 +43,11 @@ async function init() {
     renderer = RenderHelper.createRenderer("#app");
     controls = ControlsHandler.setupControls(camera,  renderer)
 
+
     await RAPIER.init()
     world = new World(scene);
+
+    await assetManager.loadRegistry(assetPath)
 
     world.add(debug);
 
@@ -51,78 +58,41 @@ async function init() {
     //world.add(new AmbientLightObject({intensity: 0.75}));
     //world.add(new SpotLightObject({position: new THREE.Vector3(-2,2,-2),}));
 
-    createGround();
+    createLandscape();
 
-    spawnCube(20)
+    for(let i = 20; i < 30; i++) {
+        spawnCube(i)
+    }
 
     console.log(world.gameObjects);
 
     animate();
 }
 
-function createGround() {
-    // const mesh = new THREE.Mesh(
-    //     new THREE.PlaneGeometry(10, 10),
-    //     new THREE.MeshStandardMaterial({ color: 0xffffff })
-    // );
-    //
-    // var temp = new PhysicalMeshObject({mesh: mesh, receiveShadows: true, fixed: true});
-    // temp.setRotation(-90,0,0);
-    // world.add(temp);
+function createLandscape() {
 
     gltfLoader.load("/models/world/landscape/world.glb", (gltf) => {
         let tempmesh = null;
 
-        gltf.scene.position.y = -0.5;
-        gltf.scene.scale.set(0.5, 0.5, 0.5);
-
         gltf.scene.traverse((node) => {
             if (node.isMesh) tempmesh = node;
         });
-        world.add(new PhysicalMeshObject({mesh: tempmesh, fixed: true, scale : new Vector3(100,100,100) }));
+        world.add(new PhysicalMeshObject({
+            mesh: tempmesh,
+            fixed: true,
+            scale : new Vector3(100,100,100)
+        }));
     });
 }
 
 function spawnCube(y){
-    gltfLoader.load("/models/dice/dice.glb", (gltf) => {
-        let tempmesh = null;
 
-        gltf.scene.position.y = -0.5;
-        gltf.scene.scale.set(0.5, 0.5, 0.5);
-
-        gltf.scene.traverse((node) => {
-            if (node.isMesh) tempmesh = node;
-        });
-        world.add(new PhysicalMeshObject({mesh: tempmesh, receiveShadows: true, position: new THREE.Vector3(0, y, 0) }));
-    });
-
-    // gltfLoader.load("/models/dice/dice.glb", (gltf) => { geom merge
-    //     const geometries = [];
-    //
-    //     // 1. Traverse the scene to find all geometries
-    //     gltf.scene.traverse((node) => {
-    //         if (node.isMesh) {
-    //             // Apply the node's world transform to the geometry so they stay in place
-    //             node.updateMatrixWorld();
-    //             const clonedGeometry = node.geometry.clone();
-    //             clonedGeometry.applyMatrix4(node.matrixWorld);
-    //             geometries.push(clonedGeometry);
-    //         }
-    //     });
-    //
-    //     // 2. Merge all collected geometries into one
-    //     const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries, true);
-    //
-    //     // 3. Create a single mesh (using the material from the first mesh found, or a default)
-    //     const tempmesh = new THREE.Mesh(mergedGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff }));
-    //
-    //     // 4. Add to your physical world
-    //     world.add(new PhysicalMeshObject({
-    //         mesh: tempmesh,
-    //         receiveShadows: true,
-    //         position: new THREE.Vector3(0, y, 0)
-    //     }));
-    // });
+    world.add(new PhysicalMeshObject({
+        mesh: assetManager.getModel("none"),
+        receiveShadows: true,
+        position: new THREE.Vector3(0, 2*y+0.5*y, 0),
+        //overrideCollider: RAPIER.ColliderDesc.cuboid(1, 1, 1).setMass(1).setRestitution(0.5)
+    }));
 }
 
 function animate() {
