@@ -2,6 +2,7 @@
 import PointLightObject from "../../light/PointLightObject.js";
 import SpotLightObject from "../../light/SpotlightObject.js";
 import * as THREE from "three";
+import DirectionalLightObject from "../../light/DirectionalLightObject.js";
 
 export default class DebugLightVisualiser extends GameObject {
 
@@ -25,6 +26,12 @@ export default class DebugLightVisualiser extends GameObject {
 
             else if (gameObject instanceof SpotLightObject) {
                 const helper = new THREE.SpotLightHelper(gameObject.light);
+                this.visualisers.push(helper);
+                this.objectScene.add(helper);
+            }
+
+            else if (gameObject instanceof DirectionalLightObject) {
+                const helper = new THREE.DirectionalLight(gameObject.light);
                 this.visualisers.push(helper);
                 this.objectScene.add(helper);
             }

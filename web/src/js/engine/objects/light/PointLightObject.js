@@ -10,13 +10,14 @@ export default class PointLightObject extends GameObject {
             color = 0xffffff,
             intensity = 10,
             distance = 0,
-            decay = 2
+            decay = 2,
+            castShadow = true,
         } = args;
 
         this.light = new THREE.PointLight(color, intensity, distance, decay);
+        this.light.castShadow =castShadow;
         this.objectScene = this.light;
 
-        this.light.position.copy(this.position);
     }
 
     update() {

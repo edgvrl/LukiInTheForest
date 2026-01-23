@@ -24,6 +24,7 @@ export default class GameObject {
         );
         this.scale = scale.clone();
 
+
         this.objectScene = null;
     }
 

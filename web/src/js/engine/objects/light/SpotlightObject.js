@@ -14,9 +14,11 @@ export default class SpotLightObject extends GameObject {
             decay = 2,
             angle = Math.PI/3,
             penumbra = 0,
+            castShadow = true,
         } = args;
 
         this.light = new THREE.SpotLight(color, intensity, distance, angle, penumbra, decay);
+        this.light.castShadow =castShadow;
         this.objectScene = this.light;
 
         this.objectScene.position.copy(this.position);
@@ -53,7 +55,7 @@ export default class SpotLightObject extends GameObject {
             radius * Math.cos(theta) * Math.cos(phi)
         );
 
-        this.lookAt(this.position.clone().add(offset));
+        this.lookAt(this.objectScene.position.clone().add(offset));
     }
 
     update() {

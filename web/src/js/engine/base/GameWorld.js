@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import RAPIER from '@dimforge/rapier3d-compat';
 import GameObject from "./GameObject.js";
+import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 
 
 export default class World {
@@ -14,6 +15,8 @@ export default class World {
 
         this.gameObjects = new Map();
         this._nextId = 1;
+
+        this.loadedModels = new Map();
     }
 
     #getNewID() {

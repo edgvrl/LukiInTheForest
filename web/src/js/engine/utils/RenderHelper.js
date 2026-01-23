@@ -25,7 +25,12 @@ export function createCamera(fov = 60, near = 0.1, far = 1000) {
 export function createRenderer(containerSelector = "#app") {
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    // renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    // renderer.toneMappingExposure = 1;
 
     const container = document.querySelector(containerSelector);
     if (!container) throw new Error(`Container "${containerSelector}" not found.`);
