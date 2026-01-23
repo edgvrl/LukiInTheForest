@@ -1,30 +1,23 @@
-﻿import * as THREE from "three";
-import GameObject from "../../base/GameObject.js";
+import * as THREE from "three";
 import RAPIER from "@dimforge/rapier3d-compat";
+import MeshObject from "../mesh/MeshObject.js";
 
-export default class StaticMeshObject extends GameObject {
+export default class PhysicalMeshObject extends MeshObject {
 
     constructor(args = {}) {
         super(args);
 
         const {
-            mesh = new THREE.Mesh(),
-            receiveShadows: receiveShadows = true,
-            physics = true,
             mass= 1,
             restitution = 0.5,
             fixed = false,
         } = args;
 
-        this.physics = physics;
+        this.physics = true;
 
         this.fixed = fixed;
         this.mass = mass;
         this.restitution = restitution;
-
-        mesh.receiveShadow = receiveShadows;
-
-        this.objectScene = mesh;
     }
 
     onAdded(){
@@ -68,7 +61,5 @@ export default class StaticMeshObject extends GameObject {
 
         this.objectScene.position.copy(this.rigidbody.translation())
         this.objectScene.quaternion.copy(this.rigidbody.rotation())
-
-        //this.setRotation(this.getRotation().x+1,0,0);
     }
 }

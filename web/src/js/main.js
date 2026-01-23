@@ -7,10 +7,11 @@ import * as ControlsHandler from "./engine/ControlsHandler.js";
 import World from "./engine/base/GameWorld.js";
 import PointLightObject from "./engine/objects/light/PointLightObject.js";
 import SpotLightObject from "./engine/objects/light/SpotlightObject.js";
-import StaticMeshObject from "./engine/objects/mesh/StaticMeshObject.js";
+import MeshObject from "./engine/objects/mesh/MeshObject.js";
 
 import DebugMenu from "./engine/objects/debug/DebugMenu.js";
 import DebugCollisionVisualiser from "./engine/objects/debug/modules/DebugCollisionVisualiser.js";
+import PhysicalMeshObject from "./engine/objects/physics/PhysicalMeshObject.js";
 
 const clock = new THREE.Clock();
 
@@ -56,7 +57,7 @@ function createGround() {
         new THREE.MeshStandardMaterial({ color: 0xffffff })
     );
 
-    var temp = new StaticMeshObject({mesh: mesh, receiveShadows: true, fixed: true});
+    var temp = new PhysicalMeshObject({mesh: mesh, receiveShadows: true, fixed: true});
     temp.setRotation(-90,0,0);
     world.add(temp);
 }
@@ -67,7 +68,7 @@ function spawnCube(y){
         new THREE.MeshStandardMaterial({ color: 0xff0000 })
     );
 
-    var temp = new StaticMeshObject({mesh: mesh, receiveShadows: true, position: new THREE.Vector3(0, y, 0) });
+    var temp = new PhysicalMeshObject({mesh: mesh, receiveShadows: true, position: new THREE.Vector3(0, y, 0) });
     world.add(temp);
 }
 
