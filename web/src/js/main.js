@@ -34,18 +34,16 @@ async function init() {
     world = new World(scene);
 
     world.add(debug);
-    world.add(new DebugCollisionVisualiser())
 
-
-    createGround();
 
     world.add(new PointLightObject({position: new THREE.Vector3(2,2,2),}));
-    world.add(new SpotLightObject({position: new THREE.Vector3(0,5,0),}));
+    world.add(new SpotLightObject({position: new THREE.Vector3(-2,2,-2),}));
+
+    createGround();
 
     for(var i = 2; i < 10; i+=1.5) {
         spawnCube(i)
     }
-
 
     console.log(world.gameObjects);
 

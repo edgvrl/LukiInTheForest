@@ -2,6 +2,7 @@
 import { GUI } from "dat.gui";
 import DebugFrameTimeMonitor from "./modules/DebugFrameTimeMonitor.js";
 import DebugLightVisualiser from "./modules/DebugLightVisualiser.js";
+import DebugCollisionVisualiser from "./modules/DebugCollisionVisualiser.js";
 
 export default class DebugMenu extends GameObject {
 
@@ -13,27 +14,10 @@ export default class DebugMenu extends GameObject {
         this.debugState = {
             frameTimeMonitor: false,
             lightVisualiser: false,
+            collisionVisualiser: false,
         };
 
         this.debugGui = new GUI();
-
-         var ro = this.debugGui.addFolder("Render Options");
-         ro.add(this.debugState, "frameTimeMonitor")
-            .name("FPS/MS")
-            .onChange((enabled) => {
-                enabled
-                    ? this.spawnFrameTimeMonitor()
-                    : this.destroyFrameTimeMonitor();
-            });
-
-        ro.add(this.debugState, "lightVisualiser")
-            .name("Light Visualiser")
-            .onChange((enabled) => {
-                enabled
-                    ? this.spawnLightVisualiser()
-                    : this.destroyLightVisualiser();
-            });
-
 
         //this.debugGui.domElement.style.display = "none"; TODO: only for debug purposes
 
@@ -46,6 +30,10 @@ export default class DebugMenu extends GameObject {
             }
         });
 
+    }
+
+    onAdded() {
+        this.constructGUI(this.debugGui);
     }
 
     spawnFrameTimeMonitor() {
@@ -62,6 +50,7 @@ export default class DebugMenu extends GameObject {
         this.FTMonitor = null;
     }
 
+
     spawnLightVisualiser() {
         if (this.lightVisualiser) return;
 
@@ -76,6 +65,24 @@ export default class DebugMenu extends GameObject {
         this.lightVisualiser = null;
     }
 
+
+    spawnCollisionVisualiser() {
+        if (this.collisionVisualiser) return;
+
+        this.collisionVisualiser = new DebugCollisionVisualiser();
+        this.parentWorld.add(this.collisionVisualiser);
+    }
+
+    destroyCollisionVisualiser() {
+        if (!this.collisionVisualiser) return;
+
+        this.collisionVisualiser.destroy();
+        this.collisionVisualiser = null;
+    }
+
+
+
+
     update() {
         super.update();
     }
@@ -83,7 +90,44 @@ export default class DebugMenu extends GameObject {
     destroy() {
         this.destroyFrameTimeMonitor();
         this.destroyLightVisualiser()
+        this.destroyCollisionVisualiser()
+
         this.debugGui.destroy();
+
         super.destroy();
+    }
+
+    constructGUI(gui){
+        var ro = gui.addFolder("Render Options");
+        var po = gui.addFolder("Physics Options");
+
+        ro.add(this.debugState, "frameTimeMonitor")
+            .name("FPS/MS")
+            .onChange((enabled) => {
+                enabled
+                    ? this.spawnFrameTimeMonitor()
+                    : this.destroyFrameTimeMonitor();
+            });
+
+        ro.add(this.debugState, "lightVisualiser")
+            .name("Light Visualiser")
+            .onChange((enabled) => {
+                enabled
+                    ? this.spawnLightVisualiser()
+                    : this.destroyLightVisualiser();
+            });
+
+        ro.add(this.debugState, "collisionVisualiser")
+            .name("Collision Visualiser")
+            .onChange((enabled) => {
+                enabled
+                    ? this.spawnCollisionVisualiser()
+                    : this.destroyCollisionVisualiser();
+            });
+
+        po.add(this.parentWorld.gravity, 'x', -10.0, 10.0, 0.1)
+        po.add(this.parentWorld.gravity, 'y', -10.0, 10.0, 0.1)
+        po.add(this.parentWorld.gravity, 'z', -10.0, 10.0, 0.1)
+
     }
 }
