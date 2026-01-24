@@ -91,7 +91,7 @@ function spawnCube(y){
         mesh: assetManager.getModel("none"),
         receiveShadows: true,
         position: new THREE.Vector3(0, 2*y+0.5*y, 0),
-        //overrideCollider: RAPIER.ColliderDesc.cuboid(1, 1, 1).setMass(1).setRestitution(0.5)
+        overrideCollider: RAPIER.ColliderDesc.cuboid(1, 1, 1).setMass(1).setRestitution(0.5)
     }));
 }
 
