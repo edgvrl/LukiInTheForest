@@ -25,7 +25,7 @@ export default class GameObject {
         this.scale = scale.clone();
 
 
-        this.objectScene = null;
+        this.objectScene = new THREE.Group();
     }
 
     onAdded(){}

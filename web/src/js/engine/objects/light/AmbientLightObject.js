@@ -12,7 +12,7 @@ export default class AmbientLightObject extends GameObject {
         } = args;
 
         this.light = new THREE.AmbientLight(color, intensity);
-        this.objectScene = this.light;
+        this.objectScene.add(this.light);
 
     }
 

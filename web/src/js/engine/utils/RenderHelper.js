@@ -1,6 +1,4 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 let camera, renderer;
 let autoscale = true;
@@ -29,8 +27,8 @@ export function createRenderer(containerSelector = "#app") {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    // renderer.toneMappingExposure = 1;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.8;
 
     const container = document.querySelector(containerSelector);
     if (!container) throw new Error(`Container "${containerSelector}" not found.`);

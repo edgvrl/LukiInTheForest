@@ -9,7 +9,6 @@ export default class DebugLightVisualiser extends GameObject {
     constructor(args = {}) {
         super(args);
 
-        this.objectScene = new THREE.Group();
         this.visualisers = [];
     }
 

@@ -1,9 +1,5 @@
 ﻿import * as THREE from "three";
 import GameObject from "../../base/GameObject.js";
-import {HDRLoader} from "three/addons";
-import {FloatType} from "three";
-
-const loader = new HDRLoader();
 
 export default class SkyBoxObject extends GameObject {
 
@@ -11,17 +7,20 @@ export default class SkyBoxObject extends GameObject {
         super(args);
 
         const {
-            hdr = "/textures/env/test.hdr",
+            asset = "skybox",
             renderer = null,
         } = args;
 
-        this.hdrPath = hdr;
+
+        this.asset = asset;
         this.objectScene = null;
         this.renderer = renderer;
     }
 
     async onAdded() {
-        const hdrTexture = await loader.loadAsync(this.hdrPath);
+        super.onAdded();
+
+        const hdrTexture = this.parentWorld.assetManager.getTexture("skybox");
         hdrTexture.mapping = THREE.EquirectangularReflectionMapping;
 
         const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
@@ -34,7 +33,6 @@ export default class SkyBoxObject extends GameObject {
 
         hdrTexture.dispose();
         pmremGenerator.dispose();
-
     }
 
     update() {

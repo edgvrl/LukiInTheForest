@@ -1,32 +1,55 @@
-﻿import * as THREE from "three";
-import GameObject from "../../base/GameObject.js";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
+﻿import GameObject from "../../base/GameObject.js";
 
 export default class MeshObject extends GameObject {
 
+    // In MeshObject.js constructor
     constructor(args = {}) {
         super(args);
 
         const {
+            asset = "skybox",
             mesh = null,
             receiveShadows = true,
             castShadows = true,
         } = args;
-        this.mesh = mesh;
 
-        this.objectScene = this.mesh;
+        this.asset = asset;
+        this.mesh = mesh;
 
         this.objectScene.castShadow = castShadows;
         this.objectScene.receiveShadow = receiveShadows;
-
-        this.objectScene.position.set(this.position.x, this.position.y, this.position.z);
-        this.objectScene.rotation.set(this.getRotation().x, this.getRotation().y, this.getRotation().z);
-        this.objectScene.scale.set(this.scale.x, this.scale.y, this.scale.z);
-
     }
 
     onAdded() {
+        if (!this.mesh) {
+            let asset = this.parentWorld.assetManager.getModel(this.asset);
+            this.meshes = [];
 
+            asset.traverse((node) => {
+                if (node.isMesh) {
+                    // Ensure shadows are applied to all sub-meshes
+                    node.castShadow = this.objectScene.castShadow;
+                    node.receiveShadow = this.objectScene.receiveShadow;
+                    this.meshes.push(node);
+                }
+            });
+
+            this.mesh = this.meshes[0];
+
+            // Reset ONLY the root asset container transforms
+            asset.position.set(0, 0, 0);
+            asset.rotation.set(0, 0, 0);
+            asset.scale.set(1, 1, 1);
+
+
+
+            this.objectScene.add(asset);
+        }
+
+        // Apply the GameObject transforms to the main container
+        this.objectScene.position.copy(this.position);
+        this.objectScene.rotation.copy(this.rotation);
+        this.objectScene.scale.copy(this.scale);
     }
 
     update() {

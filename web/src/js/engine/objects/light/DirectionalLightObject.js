@@ -14,7 +14,7 @@ export default class DirectionalLightObject extends GameObject {
 
         this.light = new THREE.DirectionalLight(color, intensity);
         this.light.castShadow =castShadow;
-        this.objectScene = this.light;
+        this.objectScene.add(this.light);
 
     }
 

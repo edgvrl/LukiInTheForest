@@ -1,13 +1,11 @@
-import * as THREE from "three";
 import RAPIER from '@dimforge/rapier3d-compat';
 import GameObject from "./GameObject.js";
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
 
 
 export default class World {
 
 
-    constructor(scene) {
+    constructor(scene, assetManager) {
         this.gravity = new RAPIER.Vector3(0.0, -9.81, 0.0)
 
         this.scene = scene;
@@ -16,7 +14,7 @@ export default class World {
         this.gameObjects = new Map();
         this._nextId = 1;
 
-        this.loadedModels = new Map();
+        this.assetManager = assetManager;
     }
 
     #getNewID() {

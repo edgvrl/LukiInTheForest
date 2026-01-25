@@ -1,8 +1,5 @@
 import * as THREE from "three";
-import RAPIER, {Collider} from '@dimforge/rapier3d-compat';
-import {GLTFLoader} from "three/addons/loaders/GLTFLoader.js";
-const gltfLoader = new GLTFLoader();
-import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import RAPIER from '@dimforge/rapier3d-compat';
 
 import * as RenderHelper from "./engine/utils/RenderHelper.js";
 import * as ControlsHandler from "./engine/ControlsHandler.js";
@@ -17,7 +14,6 @@ import SkyBoxObject from "./engine/objects/light/SkyBoxObject.js";
 
 
 import DebugMenu from "./engine/objects/debug/DebugMenu.js";
-import DebugCollisionVisualiser from "./engine/objects/debug/modules/DebugCollisionVisualiser.js";
 import {Vector3} from "three";
 import AssetManager from "./engine/base/AssetManager.js";
 
@@ -45,22 +41,21 @@ async function init() {
 
 
     await RAPIER.init()
-    world = new World(scene);
+    world = new World(scene, assetManager);
+    world.add(debug);
 
     await assetManager.loadRegistry(assetPath)
-
-    world.add(debug);
 
     world.add(new SkyBoxObject({renderer: renderer}));
 
 
-    //world.add(new PointLightObject({position: new THREE.Vector3(2,2,2),}));
-    //world.add(new AmbientLightObject({intensity: 0.75}));
-    //world.add(new SpotLightObject({position: new THREE.Vector3(-2,2,-2),}));
+    world.add(new PointLightObject({position: new THREE.Vector3(2,2,2),}));
+    //world.add(new AmbientLightObject({intensity: 0.2}));
+    world.add(new SpotLightObject({position: new THREE.Vector3(-2,2,-2),}));
 
     createLandscape();
 
-    for(let i = 20; i < 30; i++) {
+    for(let i = 0; i < 10; i++) {
         spawnCube(i)
     }
 
@@ -71,27 +66,21 @@ async function init() {
 
 function createLandscape() {
 
-    gltfLoader.load("/models/world/landscape/world.glb", (gltf) => {
-        let tempmesh = null;
-
-        gltf.scene.traverse((node) => {
-            if (node.isMesh) tempmesh = node;
-        });
-        world.add(new PhysicalMeshObject({
-            mesh: tempmesh,
-            fixed: true,
-            scale : new Vector3(100,100,100)
-        }));
-    });
+    world.add(new PhysicalMeshObject({
+        asset:"landscape",
+        fixed: true,
+        scale : new Vector3(200,200,200),
+        position: new Vector3(0, 0, 0),
+    }));
 }
 
 function spawnCube(y){
 
     world.add(new PhysicalMeshObject({
-        mesh: assetManager.getModel("none"),
+        asset:"m_error",
         receiveShadows: true,
         position: new THREE.Vector3(0, 2*y+0.5*y, 0),
-        overrideCollider: RAPIER.ColliderDesc.cuboid(1, 1, 1).setMass(1).setRestitution(0.5)
+        overrideCollider: RAPIER.ColliderDesc.cuboid(1, 1, 1).setMass(100).setRestitution(0)
     }));
 }
 

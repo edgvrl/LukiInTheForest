@@ -1,6 +1,5 @@
 ﻿import * as THREE from "three";
 import GameObject from "../../base/GameObject.js";
-import PointLightObject from "./PointLightObject.js";
 
 export default class SpotLightObject extends GameObject {
 
@@ -19,7 +18,7 @@ export default class SpotLightObject extends GameObject {
 
         this.light = new THREE.SpotLight(color, intensity, distance, angle, penumbra, decay);
         this.light.castShadow =castShadow;
-        this.objectScene = this.light;
+        this.objectScene.add(this.light);
 
         this.objectScene.position.copy(this.position);
 
@@ -61,6 +60,6 @@ export default class SpotLightObject extends GameObject {
     update() {
         super.update();
 
-        this.setRotation(0,this.getRotation().y+1,0) // test
+        this.setRotation(0,this.getRotation().y+1,0) // TODO: REMOVE AFTER TEST
     }
 }
