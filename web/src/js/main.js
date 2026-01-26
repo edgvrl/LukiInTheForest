@@ -55,9 +55,7 @@ async function init() {
 
     createLandscape();
 
-    for(let i = 0; i < 10; i++) {
-        spawnCube(i)
-    }
+    spawnTree(0)
 
     console.log(world.gameObjects);
 
@@ -74,13 +72,14 @@ function createLandscape() {
     }));
 }
 
-function spawnCube(y){
+function spawnTree(y){
 
     world.add(new PhysicalMeshObject({
-        asset:"m_error",
+        fixed: true,
+        asset:"tree2",
         receiveShadows: true,
         position: new THREE.Vector3(0, 2*y+0.5*y, 0),
-        overrideCollider: RAPIER.ColliderDesc.cuboid(1, 1, 1).setMass(100).setRestitution(0)
+        overrideCollider: RAPIER.ColliderDesc.cuboid(1, 10, 1).setMass(100).setRestitution(0)
     }));
 }
 
