@@ -5,7 +5,12 @@
     "landscape": "/models/world/landscape/world.glb",
     "ak47": "/models/weapons/AK47.glb",
     "syringe": "/models/weapons/syringe.glb",
-    "house": "/models/house/house.glb"
+    "house": "/models/house/house.glb",
+    "tree1": "/models/world/tree/tree1",
+    "tree2": "/models/world/tree/tree2",
+    "bush": "/models/world/tree/bush",
+    "stick": "/models/world/tree/stick",
+    "deadTree": "/models/world/tree/deadTree"
   },
   "textures": {
     "t_error": "/textures/env/test.hdr",
