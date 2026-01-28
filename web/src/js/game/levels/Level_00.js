@@ -5,6 +5,7 @@ import PhysicalMeshObject from "../../engine/objects/physics/PhysicalMeshObject.
 import PointLightObject from "../../engine/objects/light/PointLightObject.js";
 import SkyBoxObject from "../../engine/objects/light/SkyBoxObject.js";
 import BaseLevel from "../../engine/base/systems/levels/BaseLevel.js";
+import Player from "../../engine/objects/Player/Player.js";
 
 export default class Level_00 extends BaseLevel {
 
@@ -25,7 +26,7 @@ export default class Level_00 extends BaseLevel {
         world.add(new PhysicalMeshObject({
             asset: "landscape",
             fixed: true,
-            scale: new THREE.Vector3(200, 200, 200),
+            scale: new THREE.Vector3(400, 400, 400),
             position: new THREE.Vector3(0, 0, 0),
         }));
 
