@@ -30,7 +30,7 @@ export default class GameObject {
 
     onAdded(){}
 
-    update() {
+    update(delta) {
     }
 
     destroy() {

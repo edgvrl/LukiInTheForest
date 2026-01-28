@@ -58,7 +58,7 @@ export default class World {
 
     update(delta) {
         for (const obj of this.gameObjects.values()) {
-            obj.update();
+            obj.update(delta);
         }
 
         this.physicsScene.timestep = Math.min(delta, 0.01)

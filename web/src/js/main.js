@@ -16,6 +16,7 @@ import SkyBoxObject from "./engine/objects/light/SkyBoxObject.js";
 import DebugMenu from "./engine/objects/debug/DebugMenu.js";
 import {Vector3} from "three";
 import AssetManager from "./engine/base/AssetManager.js";
+import Player from "./engine/objects/Player/Player.js";
 
 
 const clock = new THREE.Clock();
@@ -55,7 +56,15 @@ async function init() {
 
     createLandscape();
 
-    spawnTree(0)
+    //spawnTree(0)
+
+// Player erzeugen und speichern
+    let playerInstance = new Player({});
+    world.add(playerInstance);
+
+// Kamera vom Player benutzen
+    camera = playerInstance.camera;
+
 
     console.log(world.gameObjects);
 
