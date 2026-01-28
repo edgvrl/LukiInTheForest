@@ -13,9 +13,11 @@ import AmbientLightObject from "./engine/objects/light/AmbientLightObject.js";
 import SkyBoxObject from "./engine/objects/light/SkyBoxObject.js";
 
 
+
 import DebugMenu from "./engine/objects/debug/DebugMenu.js";
 import {Vector3} from "three";
 import AssetManager from "./engine/base/AssetManager.js";
+import TreeSpawner from "./game/prefabs/TreeSpawner.js";
 
 
 const clock = new THREE.Clock();
@@ -55,7 +57,7 @@ async function init() {
 
     createLandscape();
 
-    spawnTree(0)
+    world.add(new TreeSpawner({}));
 
     console.log(world.gameObjects);
 
@@ -72,16 +74,7 @@ function createLandscape() {
     }));
 }
 
-function spawnTree(y){
 
-    world.add(new PhysicalMeshObject({
-        fixed: true,
-        asset:"tree2",
-        receiveShadows: true,
-        position: new THREE.Vector3(0, 2*y+0.5*y, 0),
-        overrideCollider: RAPIER.ColliderDesc.cuboid(1, 10, 1).setMass(100).setRestitution(0)
-    }));
-}
 
 function animate() {
 
