@@ -24,7 +24,7 @@ export default class Level_00 extends BaseLevel {
 
         // Landscape
         world.add(new PhysicalMeshObject({
-            asset: "landscape",
+            asset: "landscape", /* TODO: REDO TEXTURES, COLLISION IS BETTER THAN CURRENT WORLD */
             fixed: true,
             scale: new THREE.Vector3(400, 400, 400),
             position: new THREE.Vector3(0, 0, 0),
