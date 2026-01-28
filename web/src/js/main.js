@@ -76,7 +76,7 @@ function createLandscape() {
     world.add(new PhysicalMeshObject({
         asset:"landscape",
         fixed: true,
-        scale : new Vector3(200,200,200),
+        scale : new Vector3(400,400,400),
         position: new Vector3(0, 0, 0),
     }));
 }

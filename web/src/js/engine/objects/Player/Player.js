@@ -25,8 +25,9 @@ export default class Player extends GameObject {
             asset: "",
             position: new Vector3(0, 10, 0),
             fixed: false,
-            mass: 20,
-            overrideCollider: RAPIER.ColliderDesc.ball(2).setMass(10).setRestitution(0)
+            mass: 40,
+            restitution: 0,
+            overrideCollider: RAPIER.ColliderDesc.ball(2)
         });
 
         // Kamera
@@ -92,7 +93,7 @@ export default class Player extends GameObject {
 
         // Richtung
         this.direction.z = Number(this.moveForward) - Number(this.moveBackward);
-        this.direction.x = Number(this.moveRight) - Number(this.moveLeft);
+        this.direction.x = Number(this.moveLeft) - Number(this.moveRight);
         this.direction.normalize();
 
         // Geschwindigkeit anwenden

@@ -10,8 +10,10 @@ export default class PhysicalMeshObject extends MeshObject {
         const {
             mass= 1,
             restitution = 0,
+            friction = 1,
             fixed = false,
             overrideCollider = null
+
         } = args;
 
         this.physics = true;
@@ -19,6 +21,7 @@ export default class PhysicalMeshObject extends MeshObject {
         this.fixed = fixed;
         this.mass = mass;
         this.restitution = restitution; // basicaly wie gut es energie weitergibt
+        this.friction = friction;
 
         this.overrideCollider = overrideCollider; // TODO: add simplex Collision as default, complex and override as option
     }
@@ -36,6 +39,10 @@ export default class PhysicalMeshObject extends MeshObject {
         );
 
         if (this.overrideCollider) {
+            this.overrideCollider
+                .setMass(this.mass)
+                .setRestitution(this.restitution)
+                .setFriction(this.friction);
             this.parentWorld.physicsScene.createCollider(this.overrideCollider, this.rigidbody);
         } else {
             this.meshes.forEach((m) => {
@@ -64,7 +71,9 @@ export default class PhysicalMeshObject extends MeshObject {
                         z: m.quaternion.z,
                         w: m.quaternion.w
                     })
-                    .setRestitution(this.restitution);
+                    .setMass(this.mass)
+                    .setRestitution(this.restitution)
+                    .setFriction(this.friction);
 
                 this.parentWorld.physicsScene.createCollider(colliderDesc, this.rigidbody);
             });
