@@ -1,9 +1,11 @@
 import * as THREE from "three";
 import * as RenderHelper from "./engine/utils/RenderHelper.js";
 import * as ControlsHandler from "./engine/ControlsHandler.js";
-import AssetManager from "./engine/base/AssetManager.js";
+import AssetManager from "./engine/base/systems/AssetManager.js";
 import DebugMenu from "./engine/objects/debug/DebugMenu.js";
 import Level_00 from "./game/levels/Level_00.js";
+import LevelManager from "./engine/base/systems/levels/LevelManager.js";
+import Level_01 from "./game/levels/Level_01.js";
 
 const components = {
     scene: new THREE.Scene(),
@@ -14,7 +16,7 @@ const components = {
     debug: new DebugMenu({ key: "F2" }),
     assetPath: "/assets.json",
     assetManager: new AssetManager(),
-    level: null
+    levelManager: null,
 };
 
 const clock = new THREE.Clock();
@@ -25,9 +27,15 @@ async function init() {
     components.renderer = RenderHelper.createRenderer("#app");
     components.controls = ControlsHandler.setupControls(components.camera, components.renderer);
 
-    components.level = new Level_00(components);
-    await components.level.initLevelLoader();
-    components.level.load();
+    components.levelManager = new LevelManager(components);
+    await components.levelManager.initLevelLoader();
+    components.levelManager.load(Level_00);
+
+    document.addEventListener("keydown", (k) => {
+        if (k.code === "F7") {
+            components.levelManager.load(Level_01);
+        }
+    });
 
     animate();
 }
