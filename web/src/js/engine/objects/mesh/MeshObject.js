@@ -41,8 +41,6 @@ export default class MeshObject extends GameObject {
             asset.rotation.set(0, 0, 0);
             asset.scale.set(1, 1, 1);
 
-
-
             this.objectScene.add(asset);
         }
 

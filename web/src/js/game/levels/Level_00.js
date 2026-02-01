@@ -5,7 +5,7 @@ import PhysicalMeshObject from "../../engine/objects/physics/PhysicalMeshObject.
 import PointLightObject from "../../engine/objects/light/PointLightObject.js";
 import SkyBoxObject from "../../engine/objects/light/SkyBoxObject.js";
 import BaseLevel from "../../engine/base/systems/levels/BaseLevel.js";
-import Player from "../../engine/objects/Player/Player.js";
+import FirstPersonPlayer from "../../engine/objects/Player/FirstPersonPlayer.js";
 
 export default class Level_00 extends BaseLevel {
 
@@ -35,7 +35,7 @@ export default class Level_00 extends BaseLevel {
             position: new THREE.Vector3(0, 65, 0),
         }));
 
-        let playerInstance = new Player({});
+        let playerInstance = new FirstPersonPlayer({});
         world.add(playerInstance);
 
         // Kamera vom Player benutzen

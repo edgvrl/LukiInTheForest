@@ -8,6 +8,7 @@ export default class GameObject {
 
         this.physics = false;
         this.rigidbody = null;
+        this.collider = null;
 
         const {
             position = new THREE.Vector3(),
@@ -31,6 +32,10 @@ export default class GameObject {
     onAdded(){}
 
     update(delta) {
+        if(this.rigidbody){
+            this.objectScene.position.copy(this.rigidbody.translation())
+            this.objectScene.quaternion.copy(this.rigidbody.rotation())
+        }
     }
 
     destroy() {
@@ -82,11 +87,14 @@ export default class GameObject {
 
         if (this.rigidbody) {
             const quat = new THREE.Quaternion().setFromEuler(this.rotation);
-            this.rigidbody.setRotation(
-                { x: quat.x, y: quat.y, z: quat.z, w: quat.w },
-                true
-            );
-        } else if (this.objectScene) {
+            this.rigidbody.setRotation({
+                x: quat.x,
+                y: quat.y,
+                z: quat.z,
+                w: quat.w
+            }, true); // 'true' wakes up the body so it processes the change
+        }
+        else {
             this.objectScene.rotation.copy(this.rotation);
         }
     }

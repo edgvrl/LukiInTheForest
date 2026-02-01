@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as RenderHelper from "./engine/utils/RenderHelper.js";
-import * as ControlsHandler from "./engine/ControlsHandler.js";
+import * as ControlsHandler from "./engine/objects/Player/OrbitPlayer.js";
 import AssetManager from "./engine/base/systems/AssetManager.js";
 import DebugMenu from "./engine/objects/debug/DebugMenu.js";
 import Level_00 from "./game/levels/Level_00.js";
@@ -53,3 +53,12 @@ function animate() {
 }
 
 window.addEventListener("load", init);
+
+
+// import Engine from "./engine/Engine.js";
+//
+// const app = new Engine();
+//
+// window.addEventListener("load", () => {
+//     app.init().catch(console.error);
+// });

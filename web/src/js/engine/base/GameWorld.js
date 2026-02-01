@@ -6,7 +6,7 @@ export default class World {
 
 
     constructor(scene, assetManager) {
-        this.gravity = new RAPIER.Vector3(0.0, -9.81, 0.0)
+        this.gravity = new RAPIER.Vector3(0.0, -20, 0.0)
 
         this.scene = scene;
         this.physicsScene = new RAPIER.World(this.gravity)

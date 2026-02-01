@@ -38,12 +38,13 @@ export default class PhysicalMeshObject extends MeshObject {
                 .setRotation({ x: quat.x, y: quat.y, z: quat.z, w: quat.w })
         );
 
+
         if (this.overrideCollider) {
-            this.overrideCollider
+            this.collider = this.overrideCollider;
+            this.collider
                 .setMass(this.mass)
                 .setRestitution(this.restitution)
                 .setFriction(this.friction);
-            this.parentWorld.physicsScene.createCollider(this.overrideCollider, this.rigidbody);
         } else {
             this.meshes.forEach((m) => {
                 // 1. Get Geometry Data
@@ -59,7 +60,7 @@ export default class PhysicalMeshObject extends MeshObject {
                 }
 
                 // 3. Create Collider with the sub-mesh's RELATIVE transform
-                let colliderDesc = RAPIER.ColliderDesc.trimesh(vertices, indices)
+                this.collider = RAPIER.ColliderDesc.trimesh(vertices, indices)
                     .setTranslation(
                         m.position.x * this.scale.x,
                         m.position.y * this.scale.y,
@@ -74,17 +75,14 @@ export default class PhysicalMeshObject extends MeshObject {
                     .setMass(this.mass)
                     .setRestitution(this.restitution)
                     .setFriction(this.friction);
-
-                this.parentWorld.physicsScene.createCollider(colliderDesc, this.rigidbody);
             });
         }
+        this.parentWorld.physicsScene.createCollider(this.collider, this.rigidbody);
     }
+
 
     update() {
         super.update();
-
-        this.objectScene.position.copy(this.rigidbody.translation())
-        this.objectScene.quaternion.copy(this.rigidbody.rotation())
 
 
     }
