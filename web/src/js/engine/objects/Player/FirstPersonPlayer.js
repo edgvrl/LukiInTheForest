@@ -63,6 +63,10 @@ export default class FirstPersonPlayer extends GameObject {
             new Shotgun()
         ];
 
+        this.weapons.forEach(w => {
+            w.parentWorld = this.parentWorld;
+        })
+
         this.currentWeaponIndex = 0;
         this.weapon = this.weapons[this.currentWeaponIndex];
         this.weapon.equip(this.camera);

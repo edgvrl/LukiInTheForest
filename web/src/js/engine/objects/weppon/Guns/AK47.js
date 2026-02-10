@@ -1,6 +1,7 @@
 ﻿import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import Weapon from "../Weppon.js";
+import MeshObject from "../../mesh/MeshObject.js";
 
 export default class AK47 extends Weapon {
     constructor() {
@@ -23,16 +24,14 @@ export default class AK47 extends Weapon {
         const loader = new GLTFLoader();
 
         loader.load(
-            "/models/weapons/AK47.glb", // <- use manifest path directly
+            "/models/weapons/AK47.glb",
             (gltf) => {
                 this.mesh = gltf.scene;
                 console.log("AK47 model loaded");
 
-                this.mesh.position.set(-0.2, -0.25, -0.4);
+                this.mesh.position.set(0.4, -0.3, -0.4);
                 this.mesh.rotation.set(0, Math.PI / 2, 0);
                 this.mesh.scale.setScalar(0.5);
-
-
 
                 if (this.camera) {
                     this.camera.add(this.mesh);
@@ -43,64 +42,67 @@ export default class AK47 extends Weapon {
 
 
     fire() {
-        if (!this.camera) return;
+        if (!this.camera) return;             // sanity check
+        if (this.isReloading) return;         // block while reloading
+        if (this.ammo <= 0) {                 // auto-reload if empty
+            this.reload();
+            return;
+        }
 
-        console.log("AK47 fired | ammo:", this.ammo);
+        this.ammo--;
+        this.updateAmmoHUD();
 
-        // Ray origin
+        // --- Get origin and direction ---
         const origin = new THREE.Vector3();
         this.camera.getWorldPosition(origin);
 
-        // Ray direction
         const direction = new THREE.Vector3();
-        this.camera.getWorldDirection(direction);
-        direction.normalize();
+        this.camera.getWorldDirection(direction).normalize();
 
+        // --- Spawn projectile in front of camera ---
+        const projectile = new MeshObject({
+            asset: "m_error",
+            position: origin.clone(),
+            scale: new THREE.Vector3(0.1,0.1,0.1)
+        });
+        this.parentWorld.add(projectile);
+
+        // move projectile along camera direction each frame
+        const speed = 300; // units per second
+        projectile.update = (delta) => {
+            projectile.objectScene.position.add(direction.clone().multiplyScalar(speed * delta));
+        };
+        setTimeout(() => {
+            this.parentWorld.remove(projectile);
+        }, 300);
+        // --- Raycast for hits ---
         const raycaster = new THREE.Raycaster(origin, direction, 0, 100);
 
-        // Find the REAL scene root
+        // find the top-level scene
         let root = this.camera;
         while (root.parent) root = root.parent;
 
-        // Raycast (ignore the weapon itself)
-        const hits = raycaster.intersectObjects(
-            root.children,
-            true
-        ).filter(hit => hit.object !== this.mesh);
+        const hits = raycaster.intersectObjects(root.children, true)
+            .filter(hit => hit.object !== this.mesh);
 
-        // Debug / hit logic
+        // Debug line endpoint
         let endPoint = origin.clone().add(direction.clone().multiplyScalar(50));
 
         if (hits.length > 0) {
             const hit = hits[0];
-            const endPoint = hit.point;
+            endPoint = hit.point;
 
-            // Start from the hit mesh
+            // check if hit object has a zombie
             let obj = hit.object;
-
-            while (obj && !obj.userData.zombie) {
-                obj = obj.parent;
-            }
+            while (obj && !obj.userData.zombie) obj = obj.parent;
 
             if (obj && obj.userData.zombie) {
-                const zombie = obj.userData.zombie;
-
-                console.log("Hit:", obj.name || obj, "HP:", zombie.Hp);
-
-                // Apply damage
-                zombie.takeDamage(this.settings.damage);
+                obj.userData.zombie.takeDamage(this.settings.damage);
+                console.log("Hit zombie:", obj.name || obj, "HP:", obj.userData.zombie.Hp);
             } else {
                 console.log("Hit object has no HP:", hit.object.name || hit.object);
             }
-            this.updateAmmoHUD();
         }
-
-
-        // Debug line
-        const geometry = new THREE.BufferGeometry().setFromPoints([origin, endPoint]);
-        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-        const line = new THREE.Line(geometry, material);
-
+        console.log("AK47 fired | ammo:", this.ammo);
     }
-
 }

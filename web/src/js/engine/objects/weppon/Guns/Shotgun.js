@@ -1,13 +1,14 @@
 ﻿import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import Weapon from "../Weppon.js";
+import MeshObject from "../../mesh/MeshObject.js";
 
 export default class Shotgun extends Weapon {
     constructor() {
         super();
 
         this.settings = {
-            damage: 80,
+            damage: 10,
             fireRate: 1,
             magazineSize: 8,
             reloadTime: 3,
@@ -44,6 +45,14 @@ export default class Shotgun extends Weapon {
 
     fire() {
         if (!this.camera) return;
+        if (this.isReloading) return;
+        if (this.ammo <= 0) {
+            this.reload();
+            return;
+        }
+
+        this.ammo--;
+        this.updateAmmoHUD();
 
         const origin = new THREE.Vector3();
         this.camera.getWorldPosition(origin);
@@ -51,60 +60,52 @@ export default class Shotgun extends Weapon {
         const forward = new THREE.Vector3();
         this.camera.getWorldDirection(forward).normalize();
 
-        // Scene root
         let root = this.camera;
         while (root.parent) root = root.parent;
 
-        const numPellets = 20;       // number of bullets per shot
-        const spreadAngle = 0.4;     // radians, adjust for wider/narrower spread
+        const numPellets = 20;
+        const spreadAngle = 0.15; // radians
 
         for (let i = 0; i < numPellets; i++) {
-            // Random rotation for spread
+            // Create a random spread direction
             const xRot = (Math.random() - 0.5) * spreadAngle;
             const yRot = (Math.random() - 0.5) * spreadAngle;
             const dir = forward.clone();
             const quat = new THREE.Quaternion().setFromEuler(new THREE.Euler(yRot, xRot, 0));
             dir.applyQuaternion(quat).normalize();
 
-            // Raycast
+
+            const projectile = new MeshObject({
+                asset: "m_error",
+                position: origin.clone(),
+                scale: new THREE.Vector3(0.1, 0.1, 0.1)
+            });
+            this.parentWorld.add(projectile);
+
+            const speed = 200;
+            projectile.update = (delta) => {
+                projectile.objectScene.position.add(dir.clone().multiplyScalar(speed * delta));
+            };
+            setTimeout(() => {
+                this.parentWorld.remove(projectile);
+            }, 300);
+            // Raycast for hit detection
             const raycaster = new THREE.Raycaster(origin, dir, 0, 100);
             const hits = raycaster.intersectObjects(root.children, true)
                 .filter(hit => hit.object !== this.mesh);
 
-            // Default end point
-            let endPoint = origin.clone().add(dir.clone().multiplyScalar(50));
-
             if (hits.length > 0) {
                 const hit = hits[0];
-                endPoint = hit.point;
-
-                // Walk up parent chain to find Zombie
                 let obj = hit.object;
-                while (obj && !obj.userData.zombie) {
-                    obj = obj.parent;
-                }
+                while (obj && !obj.userData.zombie) obj = obj.parent;
 
                 if (obj && obj.userData.zombie) {
-                    const zombie = obj.userData.zombie;
-                    console.log("Hit:", obj.name || obj, "HP:", zombie.Hp);
-                    zombie.takeDamage(this.settings.damage);
-                } else {
-                    console.log("Hit object has no HP:", hit.object.name || hit.object);
+                    obj.userData.zombie.takeDamage(this.settings.damage);
+                    console.log("Hit zombie:", obj.name || obj, "HP:", obj.userData.zombie.Hp);
                 }
-                this.updateAmmoHUD();
             }
-
-            // Debug line for each pellet
-            const cubeSize = 3;
-            const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-            const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xffaa00 });
-            const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-
-            cube.position.copy(endPoint);
-            console.log("Shotgun cube spawned at:", endPoint, "Cube object:", cube);
-            this.objectScene.add(cube);
-            setTimeout(() => this.objectScene.remove(cube), 1000);
-
         }
+
+        console.log("Shotgun fired | ammo:", this.ammo);
     }
 }
