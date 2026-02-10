@@ -10,7 +10,7 @@ export default class LevelManager {
 
     async initLevelLoader(){
         await RAPIER.init()
-        this.components.world = new World(this.components.scene, this.components.assetManager);
+        this.components.world = new World(this.components.scene, this.components.assetManager, this.components);
         this.components.world.add(this.components.debug);
         await this.components.assetManager.loadRegistry(this.components.assetPath)
     }
@@ -28,11 +28,15 @@ export default class LevelManager {
         this.currentLevel.load();
     }
 
-    dispose(){
-        if(this.currentLevel){
-            this.components.world.gameObjects.forEach((object)=>{
-                this.components.world.remove(object);
-            })
+    dispose() {
+        if (this.currentLevel) {
+            // Filter out the debug menu so it isn't removed,
+            // OR let it be removed but ensure it is re-added correctly.
+            this.components.world.gameObjects.forEach((object) => {
+                if (object !== this.components.debug) {
+                    this.components.world.remove(object);
+                }
+            });
         }
     }
 }

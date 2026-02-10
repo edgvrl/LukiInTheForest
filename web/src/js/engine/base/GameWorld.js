@@ -5,7 +5,7 @@ import GameObject from "./GameObject.js";
 export default class World {
 
 
-    constructor(scene, assetManager) {
+    constructor(scene, assetManager, component) {
         this.gravity = new RAPIER.Vector3(0.0, -20, 0.0)
 
         this.scene = scene;
@@ -15,6 +15,8 @@ export default class World {
         this._nextId = 1;
 
         this.assetManager = assetManager;
+
+        this.cr = component;
     }
 
     #getNewID() {

@@ -1,8 +1,7 @@
 ﻿import GameObject from "../../base/GameObject.js";
+import * as THREE from "three";
 
 export default class MeshObject extends GameObject {
-
-    // In MeshObject.js constructor
     constructor(args = {}) {
         super(args);
 
@@ -13,8 +12,10 @@ export default class MeshObject extends GameObject {
             castShadows = true,
         } = args;
 
-        this.asset = asset;
+        this.asset = asset; // Store name to fetch from manager
         this.mesh = mesh;
+        this.mixer = null;
+        this.animations = [];
 
         this.objectScene.castShadow = castShadows;
         this.objectScene.receiveShadow = receiveShadows;
@@ -22,12 +23,21 @@ export default class MeshObject extends GameObject {
 
     onAdded() {
         if (!this.mesh) {
-            let asset = this.parentWorld.assetManager.getModel(this.asset);
-            this.meshes = [];
+            // 1. Get the model from manager
+            const rawAsset = this.parentWorld.assetManager.getModel(this.asset);
 
-            asset.traverse((node) => {
+            if (!rawAsset) {
+                console.error(`Asset "${this.asset}" not found!`);
+                return;
+            }
+
+            // 2. Handle Animations: GLTF animations are on the root, not sub-meshes
+            // If your manager clones models, we ensure the animations array comes along
+            this.animations = rawAsset.animations || [];
+
+            this.meshes = [];
+            rawAsset.traverse((node) => {
                 if (node.isMesh) {
-                    // Ensure shadows are applied to all sub-meshes
                     node.castShadow = this.objectScene.castShadow;
                     node.receiveShadow = this.objectScene.receiveShadow;
                     this.meshes.push(node);
@@ -36,21 +46,33 @@ export default class MeshObject extends GameObject {
 
             this.mesh = this.meshes[0];
 
-            // Reset ONLY the root asset container transforms
-            asset.position.set(0, 0, 0);
-            asset.rotation.set(0, 0, 0);
-            asset.scale.set(1, 1, 1);
+            // 3. Setup Mixer on the root asset
+            if (this.animations.length > 0) {
+                this.mixer = new THREE.AnimationMixer(rawAsset);
+                // Play the first animation by default (e.g., "walk")
+                const action = this.mixer.clipAction(this.animations[0]);
+                action.play();
+            }
 
-            this.objectScene.add(asset);
+            // Reset transforms before adding to our GameObject container
+            rawAsset.position.set(0, 0, 0);
+            rawAsset.rotation.set(0, 0, 0);
+            rawAsset.scale.set(1, 1, 1);
+
+            this.objectScene.add(rawAsset);
         }
 
-        // Apply the GameObject transforms to the main container
         this.objectScene.position.copy(this.position);
         this.objectScene.rotation.copy(this.rotation);
         this.objectScene.scale.copy(this.scale);
     }
 
-    update() {
-        super.update();
+    update(delta) {
+        super.update(delta);
+
+        // 4. Progress the animation time
+        if (this.mixer && delta) {
+            this.mixer.update(delta);
+        }
     }
 }

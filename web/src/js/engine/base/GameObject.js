@@ -9,6 +9,7 @@ export default class GameObject {
         this.physics = false;
         this.rigidbody = null;
         this.collider = null;
+        this.colliderDesc = null;
 
         const {
             position = new THREE.Vector3(),
@@ -38,8 +39,16 @@ export default class GameObject {
         }
     }
 
+    // In GameObject.js
     destroy() {
         if (!this.parentWorld) return;
+
+        // Remove the visual group from the Three.js scene
+        if (this.objectScene.parent) {
+            this.objectScene.parent.remove(this.objectScene);
+        }
+
+        // Call the internal world removal logic
         this.parentWorld.remove(this);
     }
 
@@ -107,5 +116,10 @@ export default class GameObject {
             THREE.MathUtils.radToDeg(this.rotation.y),
             THREE.MathUtils.radToDeg(this.rotation.z)
         );
+    }
+
+    getPosition() {
+        // Just return the world position vector
+        return this.objectScene.position.clone();
     }
 }

@@ -1,92 +1,27 @@
-import GameObject from "../../engine/base/GameObject.js";
+import Spawner from "../../engine/objects/spawner/Spawner.js";
 import PhysicalMeshObject from "../../engine/objects/physics/PhysicalMeshObject.js";
-import * as THREE from "three";
 import RAPIER from "@dimforge/rapier3d-compat";
+import * as THREE from "three";
 
-export default class TreeSpawner extends GameObject {
-    constructor(args = {}) {
-        super(args);
-        // Configurable options
-        this.treeCount = args.treeCount || 400;
-        this.debug = args.debug || false;
-        this.spawnArea = args.spawnArea || 450;
-
-        // yOffset (buffer) per asset type
-        // Positive moves up, negative moves down
-        this.assetOffsets = {
-            "tree1": 4,
-            "tree2": 1,
-            "bush": 10,
-            "stick": -1,
-            "default": 0
-        };
-    }
-
-    onAdded() {
-        super.onAdded();
-
-        const landscape = [...this.parentWorld.gameObjects.values()]
-            .find(obj => obj.asset === "landscape");
-
-        if (!landscape) {
-            console.error("TreeSpawner: Landscape not found.");
-            return;
-        }
-
-        // Wait for landscape meshes to initialize
-        setTimeout(() => this.spawn(landscape), 100);
-    }
-
-    spawn(landscape) {
-        const target = landscape.objectScene;
-        target.updateMatrixWorld(true);
-
-        const raycaster = new THREE.Raycaster();
-        const downVector = new THREE.Vector3(0, -1, 0);
-        const treeAssets = ["tree1", "tree2", "bush", "stick", "deadTree"];
-
-        for (let i = 0; i < this.treeCount; i++) {
-            const x = (Math.random() - 0.5) * this.spawnArea;
-            const z = (Math.random() - 0.5) * this.spawnArea;
-            const origin = new THREE.Vector3(x, 200, z);
-
-            if(!(x<50 && x>-50 && z<50 && z>-50)) {
-
-
-                raycaster.set(origin, downVector);
-                const intersects = raycaster.intersectObject(target, true);
-
-                if (intersects.length > 0) {
-                    const hitPoint = intersects[0].point;
-                    const asset = treeAssets[Math.floor(Math.random() * treeAssets.length)];
-
-                    // Apply the specific buffer for this asset
-                    const offset = this.assetOffsets[asset] ?? this.assetOffsets["default"];
-                    const spawnPos = hitPoint.clone();
-                    spawnPos.y += offset;
-
-                    if (asset === "bush") {
-                        this.parentWorld.add(new PhysicalMeshObject({
-                            fixed: true,
-                            asset,
-                            position: spawnPos,
-                            overrideCollider: RAPIER.ColliderDesc.cuboid(0, 0, 0)
-                        }));
-                    } else {
-                        this.parentWorld.add(new PhysicalMeshObject({
-                            fixed: true,
-                            asset,
-                            position: spawnPos,
-                            overrideCollider: RAPIER.ColliderDesc.cuboid(1, 100, 1)
-                        }));
-                    }
-
-                    if (this.debug) {
-                        const arrow = new THREE.ArrowHelper(downVector, origin, origin.y - hitPoint.y, 0x00ff00);
-                        this.parentWorld.scene.add(arrow);
-                    }
-                }
-            }
-        }
+export default class TreeSpawner {
+    constructor() {
+        return new Spawner({
+            count: 500,
+            spawnArea: 495,
+            objects: [
+                new PhysicalMeshObject({
+                    asset: "tree1",
+                    fixed: true,
+                    position: new THREE.Vector3(0, 4, 0), // Your offset
+                    overrideCollider: RAPIER.ColliderDesc.cuboid(1, 10, 1)
+                }),
+                new PhysicalMeshObject({
+                    asset: "tree2",
+                    fixed: true,
+                    position: new THREE.Vector3(0, 1, 0), // Your offset
+                    overrideCollider: RAPIER.ColliderDesc.cuboid(1, 10, 1)
+                })
+            ]
+        });
     }
 }

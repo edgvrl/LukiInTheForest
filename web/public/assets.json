@@ -7,7 +7,7 @@
     "shotgun": "/models/weapons/shotgun.glb",
     "shotgunBullets": "/models/weapons/shotgunBullets.glb",
     "syringe": "/models/weapons/syringe.glb",
-    "house": "/models/house/house.glb",
+    "house": "/models/house/house_a.glb",
     "tree1": "/models/world/tree/tree1.glb",
     "tree2": "/models/world/tree/tree2.glb",
     "zombie": "/models/enemy/zombie.glb",

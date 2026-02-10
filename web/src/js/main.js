@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as RenderHelper from "./engine/utils/RenderHelper.js";
-import * as ControlsHandler from "./engine/objects/Player/OrbitPlayer.js";
+import * as ControlsHandler from "./engine/objects/Player/ctrl.js";
 import AssetManager from "./engine/base/systems/AssetManager.js";
 import DebugMenu from "./engine/objects/debug/DebugMenu.js";
 import Level_00 from "./game/levels/Level_00.js";
@@ -29,13 +29,13 @@ async function init() {
 
     components.levelManager = new LevelManager(components);
     await components.levelManager.initLevelLoader();
-    components.levelManager.load(Level_00);
+    components.levelManager.load(Level_01);
 
-    document.addEventListener("keydown", (k) => {
-        if (k.code === "F7") {
-            components.levelManager.load(Level_01);
-        }
-    });
+    // document.addEventListener("keydown", (k) => {
+    //     if (k.code === "F7") {
+    //         components.levelManager.load(Level_01);
+    //     }
+    // });
 
     animate();
 }

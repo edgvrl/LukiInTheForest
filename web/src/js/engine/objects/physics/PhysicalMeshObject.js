@@ -38,50 +38,65 @@ export default class PhysicalMeshObject extends MeshObject {
                 .setRotation({ x: quat.x, y: quat.y, z: quat.z, w: quat.w })
         );
 
-
-        if (this.overrideCollider != null) {
-            this.collider = this.overrideCollider;
-            this.collider
-                .setMass(this.mass)
-                .setRestitution(this.restitution)
-                .setFriction(this.friction);
+        if (this.overrideCollider) {
+            this.parentWorld.physicsScene.createCollider(this.overrideCollider, this.rigidbody);
         } else {
             this.meshes.forEach((m) => {
                 // 1. Get Geometry Data
-                let vertices = new Float32Array(m.geometry.attributes.position.array);
-                let indices = new Uint32Array(m.geometry.index.array);
+                const vertices = new Float32Array(m.geometry.attributes.position.array);
+                const indices = m.geometry.index ? new Uint32Array(m.geometry.index.array) : null;
 
-                // 2. Apply the Global Scale to vertices
-                // (Rapier colliders don't inherit scale from RigidBodies, so we bake it into the vertices)
+                // 2. Bake Scale (World Scale * Local Mesh Scale)
+                const finalScale = new THREE.Vector3().copy(this.scale).multiply(m.scale);
                 for (let i = 0; i < vertices.length; i += 3) {
-                    vertices[i] *= this.scale.x;
-                    vertices[i + 1] *= this.scale.y;
-                    vertices[i + 2] *= this.scale.z;
+                    vertices[i] *= finalScale.x;
+                    vertices[i + 1] *= finalScale.y;
+                    vertices[i + 2] *= finalScale.z;
                 }
 
-                // 3. Create Collider with the sub-mesh's RELATIVE transform
-                this.collider = RAPIER.ColliderDesc.trimesh(vertices, indices)
+                // 3. Choose Shape: Convex Hull for dynamic, Trimesh for static
+                if (this.fixed) {
+                    this.colliderDesc = RAPIER.ColliderDesc.trimesh(vertices, indices);
+                } else {
+                    this.colliderDesc = RAPIER.ColliderDesc.convexHull(vertices);
+                }
+
+                // 4. Apply Relative Offset
+                // We multiply the local position by parent scale so the offset is correct
+                this.colliderDesc
                     .setTranslation(
                         m.position.x * this.scale.x,
                         m.position.y * this.scale.y,
                         m.position.z * this.scale.z
                     )
-                    .setRotation({
-                        x: m.quaternion.x,
-                        y: m.quaternion.y,
-                        z: m.quaternion.z,
-                        w: m.quaternion.w
-                    })
-                    .setMass(this.mass)
+                    .setRotation(m.quaternion)
+                    .setMass(this.mass / this.meshes.length) // Split mass among parts
                     .setRestitution(this.restitution)
                     .setFriction(this.friction);
+
+                // 5. ATTACH IMMEDIATELY (Don't overwrite a single variable)
+                this.parentWorld.physicsScene.createCollider(this.colliderDesc, this.rigidbody);
             });
         }
-        this.parentWorld.physicsScene.createCollider(this.collider, this.rigidbody);
+
+    }
+
+    // In PhysicalMeshObject.js
+    destroy() {
+        // 1. Remove from Rapier Physics World
+        if (this.rigidbody && this.parentWorld.physicsScene) {
+            // removeRigidBody also deletes all attached colliders automatically
+            this.parentWorld.physicsScene.removeRigidBody(this.rigidbody);
+            this.rigidbody = null;
+        }
+
+        // 2. Call super to handle Three.js and world list cleanup
+        super.destroy();
     }
 
 
-    update() {
+    update(delta) {
+        if (!this.rigidbody) return;
         super.update();
 
 

@@ -21,7 +21,7 @@ export default class Weapon extends GameObject {
     }
 
     equip(camera) {
-        console.log("Weapon equipped");
+        //console.log("Weapon equipped");
         this.camera = camera;
         if (this.mesh) {
             camera.add(this.mesh);
