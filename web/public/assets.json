@@ -10,8 +10,8 @@
     "house": "/models/house/house.glb",
     "tree1": "/models/world/tree/tree1.glb",
     "tree2": "/models/world/tree/tree2.glb",
-    "bush": "/models/world/tree/bush.glb",
-    "stick": "/models/world/tree/stick.glb",
+    "bush": "/models/world/tree/bush_BROKEN.glb",
+    "stick": "/models/world/tree/stick_BROKEN.glb",
     "deadTree": "/models/world/tree/deadTree.glb"
 
   },

@@ -39,7 +39,7 @@ export default class PhysicalMeshObject extends MeshObject {
         );
 
 
-        if (this.overrideCollider) {
+        if (this.overrideCollider != null) {
             this.collider = this.overrideCollider;
             this.collider
                 .setMass(this.mass)

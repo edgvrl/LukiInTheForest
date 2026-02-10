@@ -6,6 +6,7 @@ import PointLightObject from "../../engine/objects/light/PointLightObject.js";
 import SkyBoxObject from "../../engine/objects/light/SkyBoxObject.js";
 import BaseLevel from "../../engine/base/systems/levels/BaseLevel.js";
 import FirstPersonPlayer from "../../engine/objects/Player/FirstPersonPlayer.js";
+import TreeSpawner from "../prefabs/TreeSpawner.js";
 
 export default class Level_00 extends BaseLevel {
 
@@ -30,12 +31,12 @@ export default class Level_00 extends BaseLevel {
             position: new THREE.Vector3(0, 0, 0),
         }));
 
-        world.add(new PhysicalMeshObject({
-            asset: "gvfbhdmk",
-            position: new THREE.Vector3(0, 65, 0),
-        }));
+        //world.add(new PhysicalMeshObject({
+        //    asset: "gvfbhdmk",
+        //    position: new THREE.Vector3(0, 65, 0),
+        //}));
 
-        let playerInstance = new FirstPersonPlayer({});
+        let playerInstance = new FirstPersonPlayer({position: new THREE.Vector3(0, 0, 0)});
         world.add(playerInstance);
 
         // Kamera vom Player benutzen
@@ -43,17 +44,14 @@ export default class Level_00 extends BaseLevel {
 
 
         // Entities
-        this.spawnTree(0);
+        //world.add(new TreeSpawner())
 
-    }
-
-    spawnTree(y) {
-        this.components.world.add(new PhysicalMeshObject({
+        world.add(new PhysicalMeshObject({
             fixed: true,
-            asset: "tree2",
-            receiveShadows: true,
-            position: new THREE.Vector3(0, 2 * y + 0.5 * y, 0),
-            overrideCollider: RAPIER.ColliderDesc.cuboid(1, 10, 1).setMass(100)
+            asset: "ak47",
+            position: new THREE.Vector3(50, 0, 0),
+            scale: new THREE.Vector3(10, 10, 10),
         }));
+
     }
 }
