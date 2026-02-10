@@ -14,3 +14,64 @@
     display: block;
     cursor: pointer;
 }
+#crosshair {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.line {
+    position: absolute;
+    background: white;
+}
+
+.up {
+    width: 2px;
+    height: 6px;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.down {
+    width: 2px;
+    height: 6px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.left {
+    width: 6px;
+    height: 2px;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.right {
+    width: 6px;
+    height: 2px;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#hud {
+    position: fixed;       /* stays on screen */
+    top: 10px;             /* distance from top */
+    left: 10px;            /* distance from left */
+    color: black;          /* text color */
+    font-size: 20px;       /* readable size */
+    font-family: Arial, sans-serif;
+    z-index: 999;          /* above canvas */
+    pointer-events: none;  /* click-through */
+}
+#reloadStatus {
+    margin-left: 10px;
+    color: red;
+    font-weight: bold;
+}

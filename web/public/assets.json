@@ -12,8 +12,9 @@
     "tree2": "/models/world/tree/tree2.glb",
     "bush": "/models/world/tree/bush.glb",
     "stick": "/models/world/tree/stick.glb",
-    "deadTree": "/models/world/tree/deadTree.glb"
-
+    "deadTree": "/models/world/tree/deadTree.glb",
+    "zombie": "/models/enemy/zombie.glb",
+    "zombie_walk": "/models/enemy/zombie_walk.glb"
   },
   "textures": {
     "t_error": "/textures/env/test.hdr",

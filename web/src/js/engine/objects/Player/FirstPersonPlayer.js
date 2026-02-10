@@ -3,6 +3,8 @@ import * as THREE from "three";
 import PhysicalMeshObject from "../physics/PhysicalMeshObject.js";
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 import RAPIER from "@dimforge/rapier3d-compat";
+import AK47 from "../weppon/Guns/AK47.js";
+import Shotgun from "../weppon/Guns/Shotgun.js";
 
 export default class FirstPersonPlayer extends GameObject {
     constructor(args = {}) {
@@ -16,6 +18,9 @@ export default class FirstPersonPlayer extends GameObject {
             lookSensitivity: 0.15,
             playerHeight: 1.0 // Half-height of collider
         };
+        //Gun states
+        this.reloadRequested = false;
+
 
         // State
         this.yaw = 0;
@@ -24,7 +29,7 @@ export default class FirstPersonPlayer extends GameObject {
         this.isGrounded = false;
 
         this.playerObject = new PhysicalMeshObject({
-            asset: "",
+            asset: "stick",
             position: new THREE.Vector3(0, 10, 0),
             fixed: false,
             mass: 70,
@@ -32,6 +37,7 @@ export default class FirstPersonPlayer extends GameObject {
             friction: 0,
             overrideCollider: RAPIER.ColliderDesc.ball(this.settings.playerHeight)
         });
+
 
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.position.set(0, 1.6, 0);
@@ -51,6 +57,16 @@ export default class FirstPersonPlayer extends GameObject {
         this.playerObject.rigidbody.lockRotations(true, true, true);
 
         this._setupEventListeners();
+
+        this.weapons = [
+            new AK47(),
+            new Shotgun()
+        ];
+
+        this.currentWeaponIndex = 0;
+        this.weapon = this.weapons[this.currentWeaponIndex];
+        this.weapon.equip(this.camera);
+
     }
 
     _setupEventListeners() {
@@ -61,13 +77,48 @@ export default class FirstPersonPlayer extends GameObject {
             if (this.controls.isLocked) {
                 this.yaw -= e.movementX * this.settings.lookSensitivity;
                 this.pitch -= e.movementY/window.innerHeight ;
-
+                const maxPitch = Math.PI / 2 - 0.05;
+                this.pitch = THREE.MathUtils.clamp(this.pitch, -maxPitch, maxPitch);
             }
         });
 
         document.addEventListener("keydown", (e) => this._handleKeys(e.code, true));
         document.addEventListener("keyup", (e) => this._handleKeys(e.code, false));
+        document.addEventListener("keydown", (e) => {
+            this._handleKeys(e.code, true);
+
+            // Weapon switching
+            if (e.code === "Digit1") this._switchWeapon(0);
+            if (e.code === "Digit2") this._switchWeapon(1);
+        });
+        document.addEventListener("keyup", (e) => this._handleKeys(e.code, false));
+        // Weppon Shooting
+        document.addEventListener("mousedown", (e) => {
+            if (e.button === 0) { // Left mouse
+                this.isShooting = true;
+            }
+        });
+
+        document.addEventListener("mouseup", (e) => {
+            if (e.button === 0) {
+                this.isShooting = false;
+            }
+        });
+
     }
+
+    _switchWeapon(index) {
+        if (index === this.currentWeaponIndex || !this.weapons[index]) return;
+
+        // Unequip current weapon
+        if (this.weapon) this.weapon.unequip();
+
+        // Equip new weapon
+        this.currentWeaponIndex = index;
+        this.weapon = this.weapons[index];
+        this.weapon.equip(this.camera);
+    }
+
 
     _handleKeys(code, isPressed) {
         switch (code) {
@@ -76,6 +127,8 @@ export default class FirstPersonPlayer extends GameObject {
             case "KeyA": this.input.right = isPressed ? -1 : 0; break;
             case "KeyD": this.input.right = isPressed ? 1 : 0; break;
             case "Space": if (isPressed) this.input.jump = true; break;
+            case "KeyR":
+                if (isPressed) this.reloadRequested = true;break;
         }
     }
 
@@ -99,6 +152,16 @@ export default class FirstPersonPlayer extends GameObject {
         if (!rb) return;
 
         this._checkGrounded();
+        // Player Shooting
+        const time = performance.now() / 1000;
+
+        if (this.weapon && this.isShooting) {
+            this.weapon.tryFire(time);
+        }
+        if (this.weapon && this.reloadRequested) {
+            this.weapon.reload();
+            this.reloadRequested = false;
+        }
 
         // 1. Calculate Direction
         const moveVector = new THREE.Vector3(this.input.right, 0, -this.input.forward);

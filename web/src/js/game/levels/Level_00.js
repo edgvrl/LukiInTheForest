@@ -6,6 +6,7 @@ import PointLightObject from "../../engine/objects/light/PointLightObject.js";
 import SkyBoxObject from "../../engine/objects/light/SkyBoxObject.js";
 import BaseLevel from "../../engine/base/systems/levels/BaseLevel.js";
 import FirstPersonPlayer from "../../engine/objects/Player/FirstPersonPlayer.js";
+import Zombie from "../../engine/objects/Enemy/Zombie.js";
 
 export default class Level_00 extends BaseLevel {
 
@@ -44,6 +45,10 @@ export default class Level_00 extends BaseLevel {
 
         // Entities
         this.spawnTree(0);
+        for(var i = 0; i < 5; i++) {
+            world.add(new Zombie({position: new THREE.Vector3(20, 20, 20)}));
+        }
+
 
     }
 
