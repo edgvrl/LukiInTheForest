@@ -32,7 +32,9 @@ export default class OrbitPlayerController extends GameObject {
 
     _onKeyDown(e) {
         // Checking for Enter specifically
-        if (e.code) {
+        if (e.code === "KeyS") {
+            document.location.href = "https://github.com/edgvrl/LukiInTheForest"
+        }else{
             this.transitionToLevel();
         }
     }

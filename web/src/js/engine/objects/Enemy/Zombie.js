@@ -47,10 +47,19 @@ export default class Zombie extends GameObject {
         });
     }
 
+
+
+    updateKHUD() {
+        const kelem = document.getElementById("kills");
+
+        if (kelem) kelem.textContent = parseInt(kelem.textContent) + 1;
+    }
+
     takeDamage(damage) {
         this.Hp -= damage;
         if (this.Hp <= 0) {
             if (this.playerObject) this.playerObject.destroy();
+            this.updateKHUD();
             this.destroy();
         }
     }
