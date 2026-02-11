@@ -81,6 +81,21 @@ export default class FirstPersonPlayer extends GameObject {
         this.weapon.equip(this.camera);
 
         this.updateHPHUD()
+
+        this._onResize = () => {
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+
+            // This assumes your renderer is accessible.
+            // If your framework handles the renderer elsewhere,
+            // ensure it also calls renderer.setSize(window.innerWidth, window.innerHeight)
+            const renderer = this.parentWorld.renderer; // Adjust path to your renderer
+            if (renderer) {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        };
+
+        window.addEventListener('resize', this._onResize);
     }
 
     destroy() {

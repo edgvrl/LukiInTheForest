@@ -24,11 +24,6 @@ export default class OrbitPlayerController extends GameObject {
         this._onKeyDown = this._onKeyDown.bind(this);
     }
 
-    onAdded() {
-        super.onAdded();
-        this.objectScene.add(this.camera);
-        document.addEventListener("keydown", this._onKeyDown);
-    }
 
     _onKeyDown(e) {
         // Checking for Enter specifically
@@ -54,8 +49,28 @@ export default class OrbitPlayerController extends GameObject {
             this.controls.update();
         }
     }
+    onAdded() {
+        super.onAdded();
+        this.objectScene.add(this.camera);
+
+        // Bind resize
+        this._onResize = () => {
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+
+            const renderer = this.parentWorld.renderer;
+            if (renderer) {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        };
+
+        window.addEventListener('resize', this._onResize);
+        document.addEventListener("keydown", this._onKeyDown);
+    }
 
     destroy() {
+        window.removeEventListener('resize', this._onResize);
+        document.removeEventListener("keydown", this._onKeyDown);
         // 1. Stop listening for the Enter key
         document.removeEventListener("keydown", this._onKeyDown);
 

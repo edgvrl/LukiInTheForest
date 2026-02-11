@@ -17,12 +17,21 @@ export default class DebugMenu extends GameObject {
             collisionVisualiser: false,
         };
 
-        this.debugGui = new GUI();
+        this.debugGui = new GUI({ autoPlace: true });
+        document.body.appendChild(this.debugGui.domElement);
+        const guiContainer = this.debugGui.domElement;
 
-        this.debugGui.domElement.style.display = "none";
+// Ensure it sits on top of everything
+        guiContainer.style.zIndex = "1000";
+        guiContainer.style.position = "absolute";
+        guiContainer.style.top = "0";
+        guiContainer.style.right = "0";
+        guiContainer.style.display = "none";
 
         document.addEventListener("keydown", (k) => {
             if (k.code === key) {
+                console.log("deb")
+
                 this.debugGui.domElement.style.display =
                     this.debugGui.domElement.style.display === "none"
                         ? "block"
