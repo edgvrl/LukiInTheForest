@@ -2,7 +2,7 @@
   "models": {
     "m_error": "/models/etc/error.glb",
     "dice": "/models/dice/dice.glb",
-    "landscape": "/models/world/landscape/world_broken.glb",
+    "landscape": "/models/world/landscape/world.glb",
     "ak47": "/models/weapons/AK47.glb",
     "shotgun": "/models/weapons/shotgun.glb",
     "shotgunBullets": "/models/weapons/shotgunBullets.glb",

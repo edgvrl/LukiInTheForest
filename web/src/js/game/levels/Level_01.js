@@ -7,6 +7,8 @@ import SkyBoxObject from "../../engine/objects/light/SkyBoxObject.js";
 import BaseLevel from "../../engine/base/systems/levels/BaseLevel.js";
 import OrbitPlayerController from "../../engine/objects/Player/Orbit.js";
 import TreeSpawner from "../prefabs/TreeSpawner.js";
+import MeshObject from "../../engine/objects/mesh/MeshObject.js";
+import FakeTreeSpawner from "../prefabs/FakeTreeSpawner.js";
 
 export default class Level_01 extends BaseLevel {
 
@@ -23,7 +25,7 @@ export default class Level_01 extends BaseLevel {
         //world.add(new PointLightObject({ position: new THREE.Vector3(2, 2, 2) }));
 
         // Landscape
-        world.add(new PhysicalMeshObject({
+        world.add(new MeshObject({
             asset: "landscape",
             fixed: true,
             scale: new THREE.Vector3(400, 400, 400),
@@ -39,7 +41,7 @@ export default class Level_01 extends BaseLevel {
 
         // Entities
 
-        world.add(new PhysicalMeshObject({
+        world.add(new MeshObject({
             fixed: true,
             asset: "house",
             position: new THREE.Vector3(0, -0.5, 0),
@@ -47,7 +49,7 @@ export default class Level_01 extends BaseLevel {
         }));
 
 
-        world.add(new TreeSpawner())
+        world.add(new FakeTreeSpawner())
 
     }
 }

@@ -22,6 +22,9 @@ export default class Level_00 extends BaseLevel {
         
         const { world, renderer } = this.components;
 
+        document.getElementById("hud").style.display = "block";
+        document.getElementById("startScreen").style.display = "none";
+
         // Environment
         world.add(new SkyBoxObject({ renderer }));
         //world.add(new PointLightObject({ position: new THREE.Vector3(2, 2, 2) }));

@@ -96,6 +96,7 @@ export default class FirstPersonPlayer extends GameObject {
         if (this.Hp <= 0) {
             console.log("DEAD");
 
+            //this.parentWorld.cr.levelManager.load(Level_01)
             window.location.reload();
         }
     }

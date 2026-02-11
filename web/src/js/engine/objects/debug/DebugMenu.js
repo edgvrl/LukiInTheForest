@@ -19,7 +19,7 @@ export default class DebugMenu extends GameObject {
 
         this.debugGui = new GUI();
 
-        //this.debugGui.domElement.style.display = "none"; TODO: only for debug purposes
+        this.debugGui.domElement.style.display = "none";
 
         document.addEventListener("keydown", (k) => {
             if (k.code === key) {

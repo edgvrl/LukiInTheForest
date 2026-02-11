@@ -64,14 +64,116 @@
     position: fixed;       /* stays on screen */
     top: 10px;             /* distance from top */
     left: 10px;            /* distance from left */
-    color: black;          /* text color */
+    color: white;          /* text color */
     font-size: 20px;       /* readable size */
     font-family: Arial, sans-serif;
     z-index: 999;          /* above canvas */
     pointer-events: none;  /* click-through */
+
+    background: rgba(0,0,0,.5);
+    border: 1px solid rgba(0,0,0,.5);
+    border-radius: 5px;
+
+    padding: 5px;
+
+    display:none;
 }
+
+#health{
+    color: red;
+    font-weight: bold;
+}
+
 #reloadStatus {
     margin-left: 10px;
     color: red;
     font-weight: bold;
+}
+
+#startScreen {
+    position: fixed;
+    /* 1. Ensure it covers the full viewport */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    /* 2. Keep your high z-index */
+    z-index: 998;
+
+    /* 3. Your existing centering logic */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    /* 4. Visuals */
+    background: rgba(0, 0, 0, 0.85); /* Optional: darkens background to make text pop */
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+
+    /* Removed border: 5px solid #333; */
+    /* Note: A border on a 100vw element can cause scrollbars.
+       Use box-sizing: border-box; if you want to keep the border. */
+    box-sizing: border-box;
+}
+
+.game-title {
+    font-size: 5rem;
+    color: #8b0000; /* Dunkelrot */
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8), 0 0 20px #ff0000;
+    margin-bottom: 10px;
+    letter-spacing: 10px;
+}
+
+.intro-text {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #bbb;
+}
+
+.controls {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px 40px;
+    border-radius: 8px;
+    border-left: 4px solid #8b0000;
+    text-align: left;
+}
+
+.controls h3 {
+    margin-top: 0;
+    color: #8b0000;
+    text-transform: uppercase;
+}
+
+.controls ul {
+    list-style: none;
+    padding: 0;
+}
+
+.controls li {
+    margin: 8px 0;
+}
+
+.controls span {
+    color: #fff;
+    font-weight: bold;
+    background: #333;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.pulse-text {
+    margin-top: 40px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
 }

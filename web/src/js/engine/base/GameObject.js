@@ -43,12 +43,21 @@ export default class GameObject {
     destroy() {
         if (!this.parentWorld) return;
 
-        // Remove the visual group from the Three.js scene
+        // 1. Remove Rapier Physics Body
+        if (this.rigidbody && this.parentWorld.physicsWorld) {
+            this.parentWorld.physicsWorld.removeRigidBody(this.rigidbody);
+
+            // Nullify references to prevent memory leaks or accidental updates
+            this.rigidbody = null;
+            this.collider = null;
+        }
+
+        // 2. Remove the visual group from the Three.js scene
         if (this.objectScene.parent) {
             this.objectScene.parent.remove(this.objectScene);
         }
 
-        // Call the internal world removal logic
+        // 3. Call the internal world removal logic (removes from your game loop array)
         this.parentWorld.remove(this);
     }
 

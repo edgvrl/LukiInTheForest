@@ -46,10 +46,20 @@ export default class World {
     remove(object) {
         if (object.parentWorld !== this) return;
 
+        // 1. Remove from Three.js Scene
         if (object.objectScene) {
             this.scene.remove(object.objectScene);
         }
 
+        // 2. Remove from Rapier Physics Scene
+        if (object.rigidBody) {
+            this.physicsScene.removeRigidBody(object.rigidBody);
+        } else if (object.collider) {
+            // If it's a static sensor or collider without a body
+            this.physicsScene.removeCollider(object.collider);
+        }
+
+        // 3. Clean up internal state
         this.gameObjects.delete(object.id);
 
         object.onDestroy?.();
